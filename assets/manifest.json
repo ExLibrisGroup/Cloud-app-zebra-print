@@ -1,0 +1,18 @@
+{
+   "id": "Zebra print",
+   "title": "demo",
+   "description": "demo",
+   "contentSecurity": {
+      "connectSrc": [
+         "http://api.labelary.com/"
+      ],
+      "frameSrc": [
+         "http://api.labelary.com/"
+      ]
+   },
+   "pages": {
+      "help": "/#/help",
+      "settings": "/#/settings",
+      "config": "/#/config"
+   }
+}

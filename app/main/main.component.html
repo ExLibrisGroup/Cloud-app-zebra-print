@@ -1,0 +1,25 @@
+<section>
+  <h1>Welcome to zebra printing app</h1>
+ </section>
+<!-- TODO Add true condition -->
+<div *ngIf="true">
+  <!-- TODO add real click event -->
+  <button class="float-right" mat-stroked-button color="primary" (click)="1+1">Print</button>
+  <button class="float-right" mat-stroked-button color="primary" (click)="1+1">Clear</button>
+</div>
+
+<!-- TODO fix condition -->
+<div *ngIf="true; else nobib">
+  <h3>Select record(s) to print</h3>
+  <div *ngFor="let entity of this.bibEntities" class="check-box-name">
+    <mat-checkbox class="check-box-name" [value]="entity.id">
+      {{ entity.description }}
+    </mat-checkbox>
+  </div>
+</div>
+
+<ng-template #nobib>
+  <div class="plaintext">
+    <h3>Search for bib records or items</h3>
+  </div>
+</ng-template>

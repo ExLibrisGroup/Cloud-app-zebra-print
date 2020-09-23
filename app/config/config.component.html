@@ -1,0 +1,64 @@
+<div class="title">
+  <h1>Admin Configuration</h1>
+
+  <a [routerLink]="['']">
+    <button mat-raised-button><mat-icon>arrow_back</mat-icon>Back</button>
+  </a>
+</div>
+
+<form>
+  <div class="form-container">
+    <mat-form-field>
+      <!-- TODO add binding to select -->
+      <mat-select [(value)]="kindOfTemplate" placeholder="Type of ZPL template">
+        <mat-option [value]="'loan'">Loan</mat-option>
+        <mat-option [value]="'return'">Return</mat-option>
+        <mat-option [value]="'fee'">Fee</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Short name for the ZPL</mat-label>
+      <input
+        name="name-of-template-area"
+        matInput
+        placeholder="Name your ZPL template"
+        [(ngModel)]="nameOfZPLTemplate"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>ZPL (enlarge the screen for easy editing)</mat-label>
+      <textarea
+        name="zpl-template-area"
+        matInput
+        placeholder="Your ZPL template here"
+        [(ngModel)]="zplString"
+        class="zpl-edit"
+      ></textarea>
+      <!--(change)="runXsl()"-->
+    </mat-form-field>
+  </div>
+  <!-- Just test -->
+  <!-- <hr />
+  <p>{{ nameOfZPLTemplate }}</p>
+  <hr /> -->
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title (click)="onPreviewClicked()">Preview Label Generated</mat-panel-title>
+      </mat-expansion-panel-header>
+      <!-- TOOD add picture or html -->
+      <p>something should go here {{imgToShow}}</p>
+      
+      <img [src]="this.previewService.imageToShow" alt="Your label preview">
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="commands-container">
+    <!-- TODO (click)="onSaveBtnClicked()" (click)="onLoadOrReset()" -->
+    <button mat-stroked-button (click)="onSaveBtnClicked()" type="button" [disabled]="saving">
+      Save
+    </button>
+    <button mat-stroked-button (click)="onLoadOrReset()" type="button">Reset</button>
+    <mat-spinner diameter="30" class="spinner" *ngIf="saving"></mat-spinner>
+  </div>
+</form>
