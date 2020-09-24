@@ -1,42 +1,94 @@
-import { PreviewService } from '../preview.service';
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { PreviewService } from "../preview.service";
+import { Component,OnDestroy, OnInit} from "@angular/core";
+import { CloudAppSettingsService } from "@exlibris/exl-cloudapp-angular-lib";
+import { SettingsModel } from "./settings.model";
+import { Constants } from "../constants";
 
 @Component({
   selector: "app-settings",
   templateUrl: "./settings.component.html",
   styleUrls: ["./settings.component.scss"],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit ,OnDestroy{
   printersList: string[] = ["Example1", "Example2"];
+  settings: SettingsModel;
   printerSelected: string;
   kindOfTemplate: string;
-  templatesToShow: { name: string; zpl: string }[];
-  templateToShow: { name: string; zpl: string };
+  templatesToShow: { name: string; zplString: string }[];
+  templateToShow: { name: string; zplString: string };
   saving: boolean = false;
   loading: boolean = false;
-  loadingPhoto : boolean = false;
-  photoURL : string ; //TODO replace with real photo 
+  loadingPhoto: boolean = false;
+  photoURL: string; //TODO replace with real photo
 
+  constructor(
+    private previewService: PreviewService,
+    private settingsService: CloudAppSettingsService
+  ) {}
 
-  constructor(private preview:PreviewService) {}
-
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log("On init");
+    this.onRefreshBtnClicked();
+  }
+  ngOnDestroy(){}
   /**
    *
    */
-  onSaveBtnClicked() {} //TODO Save the setting of printer
+  private initDefSettings() {
+    this.settings.selectedPrinter = this.printersList.find((x) => x !== undefined);
+    this.settings.feeTemplates = [Constants.getdefZplFee()];
+    this.settings.returnTemplates = [Constants.getdefZplReturn()];
+    this.settings.loanTemplates = [Constants.getdefZplLoan()];
+  }
+  private loadPrinters() {
+    console.log("loading printers..");
+  } //TODO load printers to printer list
+  /**
+   *
+   */
+  onSaveBtnClicked() {
+    this.saving = true;
+    this.settingsService.set(this.settings).subscribe(
+      (response) => {
+        console.log("Settings successfully saved.");
+      },
+      (err) => console.log(err.message),
+      () => (this.saving = false)
+    );
+  }
 
-  onRefreshBtnClicked() {} //TODO Load the setting of printer
+  onRefreshBtnClicked() {
+    this.loadPrinters();
+    this.settingsService.get().subscribe(
+      (settings) => {
+        console.log("Loading Settings");
+        this.settings = settings as SettingsModel;
+        if (!this.printersList.includes(this.printerSelected)) {
+          this.settings.selectedPrinter = this.printersList.find((x) => x !== undefined);
+        }
+      },
+      (err) => {
+        console.log(err);
+        this.initDefSettings();
+      }
+    );
+  }
 
   onKindChange() {
-    //Test
-    this.templatesToShow = [
-      { name: "testname", zpl: "^XA^PW400^LL200^FO20,20^A0N,30,30^FDThis is a TEST^FS^XZ" },
-      { name: "testname2", zpl: "^XA^PW400^LL200^FO20,20^A0N,30,30^FDThis is a TEST2^FS^XZ" },
-    ];
+    switch (this.kindOfTemplate){
+      case "loan":
+        this.templatesToShow = this.settings.loanTemplates;
+        this.templateToShow = this.templatesToShow[this.settings.defTemplateSelctedInd[0]];
+      case "return":
+        this.templatesToShow = this.settings.returnTemplates;
+        this.templateToShow = this.templatesToShow[this.settings.defTemplateSelctedInd[1]];
+      case "fee":
+        this.templatesToShow = this.settings.feeTemplates;
+        this.templateToShow = this.templatesToShow[this.settings.defTemplateSelctedInd[2]];
+    }
   } //TODO Load the templates for this kind
 
-  // onPreviewClicked()
+  onPreviewClicked(){}
   // {
   //   this.loadingPhoto= true;
   //   this.photoURL = this.preview.showPreview(this.templateToShow.zpl).href;

@@ -1,15 +1,11 @@
 import { Subscription } from "rxjs";
-import { ToastrService } from "ngx-toastr";
 import { MatCheckboxChange } from "@angular/material/checkbox";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import {
   CloudAppRestService,
   CloudAppEventsService,
-  Request,
-  HttpMethod,
   Entity,
   PageInfo,
-  RestErrorResponse,
   CloudAppSettingsService,
   CloudAppConfigService,
 } from "@exlibris/exl-cloudapp-angular-lib";

@@ -1,14 +1,11 @@
 {
-   "id": "Zebra print",
+   "id": "demo",
    "title": "demo",
    "description": "demo",
+   "author": "Liron Menda",
    "contentSecurity": {
-      "connectSrc": [
-         "http://api.labelary.com/"
-      ],
-      "frameSrc": [
-         "http://api.labelary.com/"
-      ]
+      "connectSrc": [],
+      "frameSrc": []
    },
    "pages": {
       "help": "/#/help",
