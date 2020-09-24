@@ -9,7 +9,10 @@
 <form>
   <mat-form-field>
     <mat-label>Selected Device:</mat-label>
-    <mat-select matNativeControl [(value)]="printerSelected">
+    <mat-select
+      [(value)]="printerSelected"
+      (selectionChange)="settings.selectedPrinter = printerSelected"
+    >
       <mat-option *ngFor="let printerName of printersList" [value]="printerName">{{
         printerName
       }}</mat-option>
@@ -18,33 +21,37 @@
   <br />
   <mat-form-field>
     <mat-label>ZPL template for:</mat-label>
-    <mat-select matNativeControl [(value)]="kindOfTemplate" (valueChange)="onKindChange()">
+    <mat-select [(value)]="kindOfTemplate" (selectionChange)="onKindChange()">
       <mat-option *ngFor="let kind of ['loan', 'return', 'fee']" [value]="kind">{{
         kind | titlecase
       }}</mat-option>
     </mat-select>
   </mat-form-field>
   <br />
-  <div class="template-choose" *ngIf="templatesToShow">
-    <mat-form-field>
-      <mat-label>Choose Template for {{ kindOfTemplate | titlecase }}</mat-label>
-      <mat-select matNativeControl [(value)]="templateToShow">
-        <mat-option *ngFor="let template of templatesToShow" [value]="template">
-          {{ template.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-accordion *ngIf="templateToShow">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title (click)="onPreviewClicked()">Preview Label Generated</mat-panel-title>
-        </mat-expansion-panel-header>
-        <!-- TOOD add picture or html -->
-        <img [src]="photoURL" *ngIf="!loadingPhoto"><img>
-        <mat-spinner diameter="30" class="spinner" *ngIf="loadingPhoto"></mat-spinner>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
+  <!-- <div class="template-choose" *ngIf="templatesToShow"> -->
+  <mat-form-field>
+    <mat-label>Choose Template for {{ kindOfTemplate | titlecase }}</mat-label>
+    <mat-select matNativeControl [(value)]="templateToShow">
+      <mat-option *ngFor="let template of templatesToShow; let i = index" [value]="template">
+        {{ template.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-accordion *ngIf="templateToShow">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title (click)="onPreviewClicked()">Preview Label Generated</mat-panel-title>
+      </mat-expansion-panel-header>
+      <!-- TOOD add picture or html -->
+        <img id="record-preview"
+          [src]="this.photoURL"
+          *ngIf="!loadingPhoto"
+        /><img />
+      <mat-spinner diameter="30" class="spinner" *ngIf="loadingPhoto"></mat-spinner>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <!-- </div> -->
   <br />
   <div class="command-container">
     <button

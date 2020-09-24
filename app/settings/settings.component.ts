@@ -39,6 +39,7 @@ export class SettingsComponent implements OnInit ,OnDestroy{
     this.settings.feeTemplates = [Constants.getdefZplFee()];
     this.settings.returnTemplates = [Constants.getdefZplReturn()];
     this.settings.loanTemplates = [Constants.getdefZplLoan()];
+    this.settings.defTemplateSelctedInd = [0,0,0];
   }
   private loadPrinters() {
     console.log("loading printers..");
@@ -63,24 +64,37 @@ export class SettingsComponent implements OnInit ,OnDestroy{
       (settings) => {
         console.log("Loading Settings");
         this.settings = settings as SettingsModel;
-        if (!this.printersList.includes(this.printerSelected)) {
+        console.log("got those settings",settings);
+        if (!this.settings.loanTemplates)
+        {
+          this.initDefSettings();
+        }
+
+        if (!(this.printersList.includes(this.settings.selectedPrinter))) {
           this.settings.selectedPrinter = this.printersList.find((x) => x !== undefined);
         }
+        this.printerSelected=this.settings.selectedPrinter;
       },
       (err) => {
         console.log(err);
         this.initDefSettings();
       }
     );
+    this.templateToShow=undefined;
+    this.templatesToShow=undefined;
+    this.kindOfTemplate=undefined;
   }
 
   onKindChange() {
+    console.log(this.kindOfTemplate);
     switch (this.kindOfTemplate){
       case "loan":
         this.templatesToShow = this.settings.loanTemplates;
         this.templateToShow = this.templatesToShow[this.settings.defTemplateSelctedInd[0]];
       case "return":
         this.templatesToShow = this.settings.returnTemplates;
+        console.log(this.templatesToShow[this.settings.defTemplateSelctedInd[1]]);
+
         this.templateToShow = this.templatesToShow[this.settings.defTemplateSelctedInd[1]];
       case "fee":
         this.templatesToShow = this.settings.feeTemplates;
@@ -88,11 +102,11 @@ export class SettingsComponent implements OnInit ,OnDestroy{
     }
   } //TODO Load the templates for this kind
 
-  onPreviewClicked(){}
-  // {
-  //   this.loadingPhoto= true;
-  //   this.photoURL = this.preview.showPreview(this.templateToShow.zpl).href;
-  //   console.log(this.photoURL);
-  //   this.loadingPhoto=false;
-  // }
+  onPreviewClicked()
+  {
+    this.loadingPhoto= true;
+    this.photoURL = this.previewService.getImage(this.templateToShow.zplString);
+    
+    this.loadingPhoto=false;
+  }
 }

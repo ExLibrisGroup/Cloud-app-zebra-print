@@ -4,8 +4,13 @@
    "description": "demo",
    "author": "Liron Menda",
    "contentSecurity": {
-      "connectSrc": [],
-      "frameSrc": []
+      "connectSrc": [
+         "http://api.labelary.com/"
+      ],
+      "frameSrc": [],
+      "sandbox": {
+         "popups": true
+      }
    },
    "pages": {
       "help": "/#/help",
