@@ -5,7 +5,8 @@
    "author": "Liron Menda",
    "contentSecurity": {
       "connectSrc": [
-         "http://api.labelary.com/"
+         "http://api.labelary.com/",
+         "http://127.0.0.1:9100/"
       ],
       "frameSrc": [],
       "sandbox": {

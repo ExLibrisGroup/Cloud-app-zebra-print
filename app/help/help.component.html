@@ -1,0 +1,15 @@
+<div>
+    <select name="Devices" value="printers" (change)="onDeviceSelected($event)" >
+        <option *ngFor="let device of devices"  [value]="device">{{device.name}}</option>
+      </select>
+      <br>
+      <!-- <textarea name="" id="" cols="30" rows="10" [(ngModel)]="zplString"></textarea> -->
+      <button (click)="onWrite()">write</button>
+      <hr>
+      <p *ngIf="writeError!==''" style="color: red;">There was an error : {{writeError}}</p>
+      <br>
+</div>
+<img *ngIf ="imageToShow"class="resize" [src]="imageToShow" />
+<br>
+<button (click)="onGet()">With GET</button>
+<button (click)="onPost()">With POST</button>

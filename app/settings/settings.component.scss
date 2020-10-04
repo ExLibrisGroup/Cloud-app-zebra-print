@@ -20,9 +20,13 @@
     margin-top: 10px;
     width: fit-content;
   }
+  .img-container
+  {
+    display: grid;
+  }
   
   .spinner {
-    float: right;
+    float: left;
   }
   
   .commands-container button {

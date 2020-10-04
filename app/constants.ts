@@ -1,6 +1,8 @@
-export class Constants 
-{
-    private static defZplTemplate = `^XA
+import { SettingsModel } from "./settings.model";
+import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
+
+export class Constants {
+  private static defZplTemplate = `^XA
 
     ^FX Top section with logo, name and address.
     ^CF0,60
@@ -32,13 +34,33 @@ export class Constants
     ^FO100,550^BC^FD_id_^FS
     
     
-    ^XZ`
+    ^XZ`;
 
-    public static getdefZplLoan(){
-        return {name:"Default Template"
-        ,zplString:this.defZplTemplate.replace("_kindOfOperation_","Loan")
-    };}
-    public static getdefZplReturn(){return {name:"Default Template",zplString:this.defZplTemplate.replace("_kindOfOperation_","Return")}}
-    public static getdefZplFee(){return {name:"Default Template",zplString:this.defZplTemplate.replace("_kindOfOperation_","Fee")}}
-    
+  private static getdefZplLoan() {
+    return {
+      name: "Default Template",
+      zplString: this.defZplTemplate.replace("_kindOfOperation_", "Loan"),
+    };
+  }
+  private static getdefZplReturn() {
+    return {
+      name: "Default Template",
+      zplString: this.defZplTemplate.replace("_kindOfOperation_", "Return"),
+    };
+  }
+  private static getdefZplFee() {
+    return {
+      name: "Default Template",
+      zplString: this.defZplTemplate.replace("_kindOfOperation_", "Fee"),
+    };
+  }
+  private static defForm = {
+    loan: [Constants.getdefZplLoan()],
+    return: [Constants.getdefZplReturn()],
+    fee: [Constants.getdefZplFee()],
+  };
+
+  public static getDefForm(): SettingsModel {
+    return Constants.defForm as SettingsModel;
+  }
 }

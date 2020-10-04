@@ -5,60 +5,84 @@
     <button mat-raised-button><mat-icon>arrow_back</mat-icon>Back</button>
   </a>
 </div>
-
-<form>
-  <div class="form-container">
-    <mat-form-field>
-      <!-- TODO add binding to select -->
-      <mat-select [(value)]="kindOfTemplate" placeholder="Type of ZPL template">
-        <mat-option [value]="'loan'">Loan</mat-option>
-        <mat-option [value]="'return'">Return</mat-option>
-        <mat-option [value]="'fee'">Fee</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Short name for the ZPL</mat-label>
-      <input
-        name="name-of-template-area"
-        matInput
-        placeholder="Name your ZPL template"
-        [(ngModel)]="nameOfZPLTemplate"
-      />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>ZPL (enlarge the screen for easy editing)</mat-label>
-      <textarea
-        name="zpl-template-area"
-        matInput
-        placeholder="Your ZPL template here"
-        [(ngModel)]="zplString"
-        class="zpl-edit"
-      ></textarea>
-      <!--(change)="runXsl()"-->
-    </mat-form-field>
+<ng-template #loading_spinner>
+  <div class="loading-shade">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
   </div>
-  <!-- Just test -->
-  <!-- <hr />
-  <p>{{ nameOfZPLTemplate }}</p>
-  <hr /> -->
-  <mat-accordion>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title (click)="onPreviewClicked()">Preview Label Generated</mat-panel-title>
-      </mat-expansion-panel-header>
-      <!-- TOOD add picture or html -->
-      <p>something should go here {{imgToShow}}</p>
-      
-      <img [src]="this.previewService.imageToShow" alt="Your label preview">
-    </mat-expansion-panel>
-  </mat-accordion>
+</ng-template>
 
-  <div class="commands-container">
-    <!-- TODO (click)="onSaveBtnClicked()" (click)="onLoadOrReset()" -->
-    <button mat-stroked-button (click)="onSaveBtnClicked()" type="button" [disabled]="saving">
-      Save
-    </button>
-    <button mat-stroked-button (click)="onLoadOrReset()" type="button">Reset</button>
-    <mat-spinner diameter="30" class="spinner" *ngIf="saving"></mat-spinner>
+<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+  <div class="form-container" *ngIf="!loadingSettings; else loading_spinner">
+    <mat-label for="#" class="label-bold">Choose kind of template</mat-label>
+    <mat-select name="kind" [(ngModel)]="kindOfTemplate" ngModel>
+      <mat-option *ngFor="let kind of ['loan', 'return', 'fee']" [value]="kind">{{
+        kind | titlecase
+      }}</mat-option>
+    </mat-select>
+    <mat-label class="label-bold">Choose your template</mat-label>
+    <mat-select name="template" ngModel>
+      <mat-option
+        *ngFor="let template of settings[kindOfTemplate]; index as idx"
+        [value]="template.name"
+        (click)="onSelectTemplate(template)"
+      >
+        {{ template.name }}</mat-option
+      >
+    </mat-select>
+    <br />
+    <textarea
+      id="textbox"
+      placeholder="Enter your'e ZPL here"
+      matInput
+      name="zpl"
+      [(ngModel)]="selectedTemplate.zplString"
+    ></textarea>
+
+    <br />
+    <div class="commands-container">
+    <button mat-stroked-button type="submit">Save</button>
+    <button mat-stroked-button type="button" (click)="onLoad()">Load</button>
+    <button mat-stroked-button type="button" (click)="onRestoreDef()">Restore defaults</button>
+  </div>
+    <br />
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Add new template</mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-form-field appearance="standard">
+          <input matNativeControl type="text" placeholder="New template name" #newTemplate />
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="onAdd(newTemplate.value) && (newTemplate.value = '')"
+        >
+          Add
+        </button>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <div class="preview">
+      <mat-accordion *ngIf="selectedTemplate">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title (click)="previewService.getPreview(selectedTemplate.zplString)"
+              >Preview Label Generated</mat-panel-title
+            >
+          </mat-expansion-panel-header>
+          <div *ngIf="!previewService.loadingPreview" class="img-container">
+            <img id="record-preview" [src]="previewService.imageToShow" /><img />
+          </div>
+          <mat-spinner
+            diameter="40"
+            class="spinner"
+            style="position: left"
+            *ngIf="previewService.loadingPreview"
+          ></mat-spinner>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
   </div>
 </form>
+
+<button (click)="debug()">Debug</button>

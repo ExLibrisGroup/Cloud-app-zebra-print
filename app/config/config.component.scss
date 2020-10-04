@@ -6,6 +6,14 @@
   .form-container > * {
     width: 100%;
   }
+  mat-label.label-bold 
+  {
+    font-size: 110%;
+    font-weight: bolder;
+  }
+  mat-select{
+    border: 1px  #0e7cbb ;
+  }
   
   div.title {
     display: flex;
@@ -22,15 +30,22 @@
   }
   
   .spinner {
-    float: right;
+    float: center;
   }
   
   .commands-container button {
     margin-right: 10px;
   }
-  
+  #textbox
+  {
+    border: 1px black solid;
+    width: 400px;
+    height: 300px;
+    margin-bottom: 4px;
+  }
   textarea.zpl-edit {
-    height: 200px;
+    height: 50%;
+    width: 100%;
   }
   
   textarea.xml-record {
@@ -44,4 +59,19 @@
   .commands-container button {
     margin-right: 10px;
   }
-  
+  .preview >img
+  {
+    width: 60%;
+    height: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  #record-preview
+  {
+    width: 300px;
+    height: 500px;
+    float: none;
+    overflow: hidden;
+  }

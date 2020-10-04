@@ -1,6 +1,9 @@
+import { Constants } from "./../constants";
+import { SettingsModel } from "./../settings.model";
 import { PreviewService } from "./../preview.service";
-import { Component, OnInit } from "@angular/core";
-import { CloudAppConfigService } from "@exlibris/exl-cloudapp-angular-lib";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { CloudAppSettingsService } from "@exlibris/exl-cloudapp-angular-lib";
+import { NgForm } from "@angular/forms";
 
 //TODO remove test
 
@@ -10,68 +13,71 @@ import { CloudAppConfigService } from "@exlibris/exl-cloudapp-angular-lib";
   styleUrls: ["./config.component.scss"],
 })
 export class ConfigComponent implements OnInit {
-  zplString: string = "^xa^cfa,50^fo100,100^fdHello World^fs^xz";
-  kindOfTemplate: string = "loan";
-  nameOfZPLTemplate: string = "";
-  saving: boolean = false;
-  isImageLoading: boolean;
-  imgToShow: any;
-
+  loadingSettings = false;
+  settings : SettingsModel = Constants.getDefForm();
+  kindOfTemplate = "loan";
+  selectedTemplate={name:'',zplString:''};
   constructor(
-    private configService: CloudAppConfigService,
+    private settingsService: CloudAppSettingsService,
     public previewService: PreviewService
   ) {}
 
-  ngOnInit(): void {}
-
-  //TODO Complete the functions , Make depednecy between the kind of template
-  /**
-   *
-   */
-  onLoadOrReset() {
-    console.log("loading config.");
-
-    this.configService.get().subscribe(
-      (response) => {
-        console.log("Got the config:");
-        console.log("get response", response);
-        if (response.customZPLs) {
-          console.log(response.customZPLs[0].name);
-          this.nameOfZPLTemplate = response.customZPLs[0].name;
-          this.zplString = response.customZPLs[0].zpl;
+  ngOnInit(): void {
+    //Loading form from Server
+    this.loadingSettings = true;
+    this.settingsService.get().subscribe(
+      (settings) => {
+        console.log("in subscribe");
+        if (settings && Object.keys(settings).length != 0) {
+          this.settings = settings;
         }
       },
-      (err) => console.log(err.message)
-    );
-  }
-
-  /**
-   *
-   */
-  onSaveBtnClicked() {
-    console.log("Saving config: " + this.nameOfZPLTemplate);
-    this.saving = true;
-    this.nameOfZPLTemplate = this.nameOfZPLTemplate.replace(".zpl", ""); // the .zpl suffix is used to mark that it's an OTB ZPL
-    var toSave = {
-      customZPLs: [
-        {
-          name: this.nameOfZPLTemplate,
-          zpl: this.zplString,
-        },
-      ],
-    };
-    this.configService.set(toSave).subscribe(
-      (response) => {
-        console.log("Saved", response);
-        this.saving = false;
+      (err) => {
+        alert("Could not load settings from server,Using defaults");
+        console.log(err);
       },
-      (err) => console.log(err.message)
+      () => (this.loadingSettings = false)
     );
   }
 
-  onPreviewClicked() {
-    //TODO find out what making this request to not pass CSP
-    console.log("started");
-    this.previewService.getImage(this.zplString);
+  onSelectTemplate(template:{name:string,zplString:string})
+  {
+    this.selectedTemplate= template;
+  }
+  /**
+   * 
+   */
+  onSubmit(form: NgForm)
+  {
+    this.loadingSettings=true;
+    this.settingsService.set(this.settings).subscribe({next:null,error:(err)=>console.log(err),complete:()=>this.loadingSettings=false})
+  } 
+
+  onAdd(templateName:string)
+  {
+    const temp = { name: templateName, zplString: ''}
+    let flag = true;
+    for (let t of this.settings[this.kindOfTemplate])
+    {
+      if (t.name=== temp.name)
+      {
+        flag=false;
+        break;
+      }
+    }
+    flag?this.settings[this.kindOfTemplate].push(temp):null;
+  }
+
+  onLoad(){
+    this.loadingSettings=true
+    this.settingsService.get().subscribe({next:(res)=>{console.log(res);this.settings=res},error:(err)=>console.log(err),complete:()=>this.loadingSettings=false})
+
+  }
+  onRestoreDef(){
+    this.settings=Constants.getDefForm();
+  }
+  
+  debug() {
+    console.log()
   }
 }

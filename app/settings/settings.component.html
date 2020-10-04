@@ -1,4 +1,4 @@
-<div class="title">
+<!-- <div class="title">
   <h1>Settings</h1>
 
   <a [routerLink]="['']">
@@ -11,7 +11,7 @@
     <mat-label>Selected Device:</mat-label>
     <mat-select
       [(value)]="printerSelected"
-      (selectionChange)="settings.selectedPrinter = printerSelected"
+      (selectionChange)="settings?settings.selectedPrinter = printerSelected:null"
     >
       <mat-option *ngFor="let printerName of printersList" [value]="printerName">{{
         printerName
@@ -27,9 +27,9 @@
       }}</mat-option>
     </mat-select>
   </mat-form-field>
-  <br />
+  <br /> -->
   <!-- <div class="template-choose" *ngIf="templatesToShow"> -->
-  <mat-form-field>
+  <!-- <mat-form-field>
     <mat-label>Choose Template for {{ kindOfTemplate | titlecase }}</mat-label>
     <mat-select matNativeControl [(value)]="templateToShow">
       <mat-option *ngFor="let template of templatesToShow; let i = index" [value]="template">
@@ -41,18 +41,20 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title (click)="onPreviewClicked()">Preview Label Generated</mat-panel-title>
-      </mat-expansion-panel-header>
+      </mat-expansion-panel-header> -->
       <!-- TOOD add picture or html -->
+      <!-- <div *ngIf='!loadingPhoto' class="img-container">
         <img id="record-preview"
           [src]="this.photoURL"
-          *ngIf="!loadingPhoto"
+          *ngIf="!loadingPhoto" class="responsive"
         /><img />
+      </div>
       <mat-spinner diameter="30" class="spinner" *ngIf="loadingPhoto"></mat-spinner>
     </mat-expansion-panel>
-  </mat-accordion>
+  </mat-accordion> -->
 
   <!-- </div> -->
-  <br />
+  <!-- <br />
   <div class="command-container">
     <button
       class="save-button"
@@ -73,4 +75,4 @@
       Refresh
     </button>
   </div>
-</form>
+</form> -->
