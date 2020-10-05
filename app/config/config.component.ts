@@ -27,7 +27,6 @@ export class ConfigComponent implements OnInit {
     this.loadingSettings = true;
     this.settingsService.get().subscribe(
       (settings) => {
-        console.log("in subscribe");
         if (settings && Object.keys(settings).length != 0) {
           this.settings = settings;
         }
@@ -77,7 +76,4 @@ export class ConfigComponent implements OnInit {
     this.settings=Constants.getDefForm();
   }
   
-  debug() {
-    console.log()
-  }
 }

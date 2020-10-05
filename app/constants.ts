@@ -58,6 +58,7 @@ export class Constants {
     loan: [Constants.getdefZplLoan()],
     return: [Constants.getdefZplReturn()],
     fee: [Constants.getdefZplFee()],
+    defTemplateSelctedInd :[0,0,0]
   };
 
   public static getDefForm(): SettingsModel {
