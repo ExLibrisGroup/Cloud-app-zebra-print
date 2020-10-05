@@ -1,3 +1,6 @@
+import { Device } from "./../device.model";
+import { SettingsModel } from "./../settings.model";
+import { PrinterService } from "./../printer.service";
 import { Subscription } from "rxjs";
 import { MatCheckboxChange } from "@angular/material/checkbox";
 import { Component, OnInit, OnDestroy } from "@angular/core";
@@ -18,120 +21,90 @@ import { HttpClient } from "@angular/common/http";
 })
 export class MainComponent implements OnInit, OnDestroy {
   private _pageLoad$: Subscription;
-  private _pageEntities: Entity[];
-  bibHash: { [index: string]: any; } = {};
-  bibEntities: Entity[]=[];
+  private _pageMeta: Subscription;
+  loadingSettings = false;
+  loadingPrinters = false;
+  settings: SettingsModel;
+  selectedPrinter: Device;
+  printers: Device[]=[];
 
   constructor(
     private restService: CloudAppRestService,
     private eventsService: CloudAppEventsService,
     private settingsService: CloudAppSettingsService,
-    private configService: CloudAppConfigService,
-    private readonly http: HttpClient
+    private printerService: PrinterService
   ) {}
 
+  private PrintersSetup() {
+    this.loadingPrinters = true;
+    // Get the default device from the application as a first step. Discovery takes longer to complete.
+    this.printerService.getDefaultDevice().subscribe(
+      (device) => {
+        // Add device to list of devices and to html select element
+        this.selectedPrinter = device;
+        this.printers.push(device);
+        // Discover any other devices available to the application
+        this.printerService.getLocalDevices().subscribe(
+          (deviceList) => {
+            // tslint:disable-next-line: no-shadowed-variable
+            if ("printer" in deviceList) {
+              for (const device of deviceList["printer"]) {
+                if (!this.selectedPrinter || device.uid !== this.selectedPrinter.uid) {
+                  this.printers.push(device);
+                }
+              }
+              console.log("finished setup");
+              return true;
+            }
+            throw new Error("No Printers");
+          },
+          () => {
+            throw new Error("Error getting local devices");
+          }
+        );
+        this.loadingPrinters = false;
+      },
+      (error) => {
+        this.loadingPrinters = false;
+        throw new Error(error);
+      }
+    );
+  }
   ngOnInit() {
-    this.eventsService.getPageMetadata().subscribe(this.onPageLoad);
+    //Loading the settings from server.
+    this.loadingSettings = true;
+    this.settingsService.get().subscribe({
+      next: (res) => (this.settings = res),
+      error: (err) => {
+        console.log(err);
+        alert(err);
+      },
+      complete: () => (this.loadingSettings = false),
+    });
+
+    //Loading printers connect with zbl browser print
+    this.PrintersSetup();
+
+    this._pageMeta = this.eventsService
+      .getPageMetadata()
+      .subscribe((pageInfo) => console.log("MetaData", pageInfo));
     this._pageLoad$ = this.eventsService.onPageLoad(this.onPageLoad);
     this.eventsService.getInitData().subscribe((data) => {
-      console.log("Init Data ",data);
+      console.log("Init Data ", data);
     });
   }
 
   ngOnDestroy() {
-    this._pageLoad$.unsubscribe();
+    this._pageMeta.unsubscribe();
   }
 
   /**
    *
    * @param onPageLoad
    */
-  onPageLoad=(pageInfo: PageInfo) =>{
+  onPageLoad(pageInfo: PageInfo) {
     console.log("This is pageInfo", pageInfo); // TODO
-    this._pageEntities = pageInfo.entities;
-
-    this.bibEntities = (pageInfo.entities || []).filter((e) =>
-      ["BIB_MMS", "IEP", "BIB"].includes(e.type)
-    );
-    console.log(this.bibEntities); //TODO
   }
 
-  /**
-   * Removes duplicated from bibentities based on id
-   */
-  dedupByMmsId() {
-    var bibEntitiesUniq: Entity[] = [];
-    this.bibEntities.forEach((bibEntity) => {
-      var alreadyThere: boolean = false;
-      bibEntitiesUniq.forEach((bibEntityUniq) => {
-        if (bibEntity.id === bibEntityUniq.id) {
-          alreadyThere = true;
-        }
-      });
-      if (!alreadyThere) {
-        // console.log("adding to deduped list: "+bibEntity.description);
-        bibEntitiesUniq.push(bibEntity);
-      }
-    });
-    this.bibEntities = bibEntitiesUniq;
-  }
-
-  /**
-   * TODO
-   * @param itemEntities
-   */
-  getListOfBibsFromListOfItemsOrPortfolios(itemEntities: Entity[]) {
-    itemEntities.forEach((itemEntity) => {
-      if (itemEntity.link) {
-        var mmsId: string = itemEntity.link
-          .replace("/bibs/", "")
-          .replace(/\/holdings\/.*/, "")
-          .replace(/\/portfolios\/.*/, "");
-        this.restService.call(`/bibs/${mmsId}?view=brief`).subscribe(
-          (response) => {
-            let title: string = response.title ? response.title : "";
-            let author: string = response.author ? response.author : "";
-            this.bibEntities.push({ id: mmsId, description: title + " " + author });
-            this.dedupByMmsId();
-          },
-          (err) => console.log(err.message)
-        );
-      }
-    });
-  }
-
-  /**
-   *  TODO
-   * @param itemEntities
-   */
-  getListOfBibsFromListOfPOLs(itemEntities: Entity[]) {
-    itemEntities.forEach((itemEntity) => {
-      if (itemEntity.link) {
-        this.restService.call(itemEntity.link).subscribe(
-          (response) => {
-            var getBibLink =
-              response.resource_metadata.mms_id.link.replace("/almaws/v1", "") + "?view=brief";
-            this.restService.call(getBibLink).subscribe(
-              (response) => {
-                let title: string = response.title ? response.title : "";
-                let author: string = response.author ? response.author : "";
-                this.bibEntities.push({ id: response.mms_id, description: title + " " + author });
-                this.dedupByMmsId();
-              },
-              (err) => console.log(err.message)
-            );
-          },
-          (err) => console.log(err.message)
-        );
-      }
-    });
-  }
-
-  onListChanged(e: MatCheckboxChange) {}
-  /**
-   * Questions:
-   * 1. Why there is a pageEntities?
-   * 2. why onpageload worked only like this and not as decleration?
-   * 3. 
-   */
+  onSubmit(f) {}
 }

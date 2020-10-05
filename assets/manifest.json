@@ -1,7 +1,7 @@
 {
-   "id": "demo",
-   "title": "demo",
-   "description": "demo",
+   "id": "Zebra print",
+   "title": "Zebra print",
+   "description": "Allows printing labels with custom ZPL templates",
    "author": "Liron Menda",
    "contentSecurity": {
       "connectSrc": [
@@ -12,6 +12,10 @@
       "sandbox": {
          "popups": true
       }
+   },
+   "icon": {
+      "type": "font",
+      "value": "fa fa-print"
    },
    "pages": {
       "help": "/#/help",

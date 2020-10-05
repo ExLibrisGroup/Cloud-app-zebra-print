@@ -14,8 +14,8 @@
 <form (ngSubmit)="onSubmit(f)" #f="ngForm">
   <div class="form-container" *ngIf="!loadingSettings; else loading_spinner">
     <mat-label for="#" class="label-bold">Choose kind of template</mat-label>
-    <mat-select name="kind" [(ngModel)]="kindOfTemplate" ngModel>
-      <mat-option *ngFor="let kind of ['loan', 'return', 'fee']" [value]="kind">{{
+    <mat-select name="kind" [(ngModel)]="kindOfTemplate" ngModel (selectionChange)="selectedTemplate=empty">
+      <mat-option *ngFor="let kind of ['loan', 'return', 'fee']" [value]="kind" >{{
         kind | titlecase
       }}</mat-option>
     </mat-select>

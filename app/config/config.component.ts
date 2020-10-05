@@ -13,6 +13,7 @@ import { NgForm } from "@angular/forms";
   styleUrls: ["./config.component.scss"],
 })
 export class ConfigComponent implements OnInit {
+  public  empty = { name: '', zplString: ''}
   loadingSettings = false;
   settings : SettingsModel = Constants.getDefForm();
   kindOfTemplate = "loan";
@@ -42,6 +43,7 @@ export class ConfigComponent implements OnInit {
   onSelectTemplate(template:{name:string,zplString:string})
   {
     this.selectedTemplate= template;
+    this.previewService.getPreview(this.selectedTemplate.zplString);
   }
   /**
    * 

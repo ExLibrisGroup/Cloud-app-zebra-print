@@ -1,37 +1,77 @@
-section>h1 {
-  padding: 5px 10px;
-  border-radius: 4px;
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container > * {
+  width: 100%;
+}
+mat-label.label-bold 
+{
+  font-size: 110%;
+  font-weight: bolder;
+}
+mat-select{
+  border: 1px  #0e7cbb ;
+}
+
+div.title {
+  display: flex;
   margin-top: 10px;
 }
 
-textarea {
-  padding: 2px;
-  border-width: 1px;
-  $width: calc(100% - 6px);
-  width: $width;
-  max-width: $width;
-  height: 150px;
-  font-family: monospace;
-  display: block;
+div.title a {
+  margin-left: auto;
 }
 
-textarea,
-section {
-  margin-bottom: 10px;
+.commands-container {
+  margin-top: 10px;
+  width: fit-content;
 }
 
-pre {
-  overflow: auto;
-  max-height: 200px;
+.spinner {
+  float: center;
 }
 
-pre,
-textarea {
-  font-size: 0.9em;
+.commands-container button {
+  margin-right: 10px;
 }
-
-div.check-box-name
+#textbox
 {
+  border: 1px black solid;
+  width: 400px;
+  height: 300px;
+  margin-bottom: 4px;
+}
+textarea.zpl-edit {
+  height: 50%;
+  width: 100%;
+}
+
+textarea.xml-record {
+  height: 100px;
+}
+.commands-container {
+  margin-top: 10px;
+  width: fit-content;
+}
+
+.commands-container button {
+  margin-right: 10px;
+}
+.preview >img
+{
+  width: 60%;
+  height: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+#record-preview
+{
+  width: 300px;
+  height: 500px;
+  float: none;
   overflow: hidden;
-  text-overflow: ellipsis;
 }

@@ -1,25 +1,21 @@
 <section>
-  <h1>Welcome to zebra printing app</h1>
- </section>
-<!-- TODO Add true condition -->
-<div *ngIf="true">
+  <h1>Welcome to Zebra printing app</h1>
+  <ng-template #loading_spinner>
+    <div class="loading-shade">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+  </ng-template>
+  <!-- *ngIf="!loadingSettings && !loadingPrinters;else loading_spinner" -->
+<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+  <div class="form-container" *ngIf="!loadingPrinters;else loading_spinner">
+    <mat-label class="label-bold">Choose whice printer to use</mat-label>
+    <mat-select name="Devices" [(ngModel)]="selectedPrinter">
+      <mat-option *ngFor="let device of printers" [value]="device">{{ device.name }}</mat-option>
+    </mat-select>
+  </div>
+
   <!-- TODO add real click event -->
-  <button class="float-right" mat-stroked-button color="primary" (click)="1+1">Print</button>
-  <button class="float-right" mat-stroked-button color="primary" (click)="1+1">Clear</button>
-</div>
-
-<!-- TODO fix condition -->
-<div *ngIf="true; else nobib">
-  <h3>Select record(s) to print</h3>
-  <div *ngFor="let entity of this.bibEntities" class="check-box-name">
-    <mat-checkbox class="check-box-name" [value]="entity.id">
-      {{ entity.description }}
-    </mat-checkbox>
-  </div>
-</div>
-
-<ng-template #nobib>
-  <div class="plaintext">
-    <h3>Search for bib records or items</h3>
-  </div>
-</ng-template>
+  <button class="float-right" mat-stroked-button color="primary" (click)="(1 + 1)">Print</button>
+  <button class="float-right" mat-stroked-button color="primary" (click)="(1 + 1)">Clear</button>
+</form>
+</section>
