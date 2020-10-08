@@ -2,39 +2,64 @@ import { SettingsModel } from "./settings.model";
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 
 export class Constants {
-  private static defZplTemplate = `^XA
+  public static placeHolders = {
+    _author_: "",
+    _call_number_: "",
+    _circ_desk_: "",
+    _description_: "",
+    _due_date_: "",
+    _holding_id_: "",
+    _item_barcode_: "",
+    _item_id_: "",
+    _item_policy_: "",
+    _last_renew_status_: "",
+    _library_: "",
+    _loan_date_: "",
+    _loan_id_: "",
+    _loan_status_: "",
+    _location_code_: "",
+    _mms_id_: "",
+    _process_status_: "",
+    _publication_year_: "",
+    _renewable_: "",
+    _title_: "",
+    _user_id_: "",
+    _kindOfOperation_:""
+  };
+  private static defZplTemplate = ` ^XA
 
-    ^FX Top section with logo, name and address.
-    ^CF0,60
-    ^FO50,50^GB100,100,100^FS
-    ^FO75,75^FR^GB100,100,100^FS
-    ^FO93,93^GB40,40,40^FS
-    ^FO220,50^FD_instName_^FS
-    ^CF0,30
-    ^FO220,115^FD_address_^FS
-    ^FO220,155^FD_state_^FS
-    ^FO220,195^FD_country_^FS
-    ^FO50,250^GB700,1,3^FS
-    
-    ^FX Second section with recipient address and permit information.
-    ^FO250,260^FD_kindOfOperation_^FS
-    ^CFA,30
-    ^FO50,300^FDJohn Doe^FS
-    ^FO50,340^FD100 Main Street^FS
-    ^FO50,380^FDSpringfield TN 39021^FS
-    ^FO50,420^FDUnited States (USA)^FS
-    ^CFA,15
-    ^FO600,300^GB150,150,3^FS
-    ^FO638,340^FDPermit^FS
-    ^FO638,390^FD123456^FS
-    ^FO50,500^GB700,1,3^FS
-    
-    ^FX Third section with barcode.
-    ^BY8,2,270
-    ^FO100,550^BC^FD_id_^FS
-    
-    
-    ^XZ`;
+  ^FX Top section with logo, name and address.
+  ^CF0,60
+
+  ^FO50,50^FDDefault institution^FS
+  ^CF0,30
+  ^FO50,115^FDAddress^FS
+  ^FO50,155^FDState^FS
+  ^FO50,195^FDCountry^FS
+  ^FO50,250^GB700,1,3^FS
+  
+  ^FX Second section with recipient address and permit information.
+  ^FO250,260^FD_kindOfOperation_^FS
+  ^CFA,30
+  ^FO50,300^FD_user_id_^FS
+  ^FO50,340^FDDue:_due_date_^FS
+  ^FO50,380^FDDate:_loan_date_^FS
+  ^FO50,420^FDLoan ID:_loan_id_^FS
+  ^CFA,15
+
+  ^FO50,500^GB700,1,3^FS
+  
+  ^FX Third section with barcode.
+^CFA,30
+ ^FO50,550^FDBarcode:_item_barcode_^FS
+ ^FO50,620^FD_author_^FS
+ ^FO50,690^FD_title_^FS
+
+
+
+  
+  
+  ^XZ`;
 
   private static getdefZplLoan() {
     return {

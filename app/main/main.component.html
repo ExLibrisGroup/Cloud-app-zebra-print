@@ -5,17 +5,50 @@
       <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
     </div>
   </ng-template>
-  <!-- *ngIf="!loadingSettings && !loadingPrinters;else loading_spinner" -->
-<form (ngSubmit)="onSubmit(f)" #f="ngForm">
-  <div class="form-container" *ngIf="!loadingPrinters;else loading_spinner">
-    <mat-label class="label-bold">Choose whice printer to use</mat-label>
-    <mat-select name="Devices" [(ngModel)]="selectedPrinter">
-      <mat-option *ngFor="let device of printers" [value]="device">{{ device.name }}</mat-option>
-    </mat-select>
-  </div>
+  <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div class="form-container" *ngIf="!loadingSettings && !loadingPrinters; else loading_spinner">
+      <mat-label class="label-bold">Choose which printer to use</mat-label>
+      <mat-select name="Devices" [(ngModel)]="selectedPrinter">
+        <mat-option *ngFor="let device of printers" [value]="device">{{ device.name }}</mat-option>
+      </mat-select>
+    </div>
 
-  <!-- TODO add real click event -->
-  <button class="float-right" mat-stroked-button color="primary" (click)="(1 + 1)">Print</button>
-  <button class="float-right" mat-stroked-button color="primary" (click)="(1 + 1)">Clear</button>
-</form>
+    <div *ngIf="entities.length===0 && this.printedList.length===0">
+      <p>Please go to "Manage Patron Services" and look for records</p>
+
+    </div>
+    <span *ngFor="let entity of printingError">
+      <h2 style="color: Red;margin-bottom: 2px;">Error in printing:</h2>
+      <p [textContent]="entity.description ? entity.description : entity.id"></p>
+      <button
+        mat
+        mat-stroked-button
+        color="primary"
+        class="float-right"
+        (click)="sendToPrint(entity)"
+      >
+        Try again
+      </button>
+      <button
+        mat
+        mat-stroked-button
+        color="primary"
+        class="float-right"
+        (click)="printingError.splice(printingError.indexOf(entity), 1)"
+      >
+        Cancel
+      </button>
+    </span>
+    <h2 style="color: green ;margin-bottom: 2px;" *ngIf="printedList.length > 0">Printed:</h2>
+    <ul style="list-style-type: none; padding: 0px; margin: 0px">
+      <li *ngFor="let entity of printedList">
+        {{ entity.description ? entity.description : entity.id }}
+        <br>
+      </li>
+    </ul>
+
+    <!-- <button mat mat-stroked-button color="primary" class="float-right" (click)="debug()">
+      Debug
+    </button> -->
+  </form>
 </section>

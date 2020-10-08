@@ -1,11 +1,10 @@
 import { Constants } from "./../constants";
 import { SettingsModel } from "./../settings.model";
 import { PreviewService } from "./../preview.service";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CloudAppSettingsService } from "@exlibris/exl-cloudapp-angular-lib";
 import { NgForm } from "@angular/forms";
 
-//TODO remove test
 
 @Component({
   selector: "app-config",

@@ -3,6 +3,7 @@ import { PreviewService } from "../preview.service";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { CloudAppSettingsService } from "@exlibris/exl-cloudapp-angular-lib";
 import { SettingsModel } from "../settings.model";
+import { Constants } from "../constants";
 
 @Component({
   selector: "app-settings",
@@ -11,7 +12,7 @@ import { SettingsModel } from "../settings.model";
 })
 export class SettingsComponent {
   loadingSettings: boolean = false;
-  settings: SettingsModel;
+  settings: SettingsModel= Constants.getDefForm();
   error: string;
   kindToPreview:string
 
@@ -23,7 +24,11 @@ export class SettingsComponent {
   ngOnInit(): void {
     this.loadingSettings = true;
     this.settingsService.get().subscribe(
-      (res) => (this.settings = res),
+      (settings) => {
+        if (settings && Object.keys(settings).length != 0) {
+          this.settings = settings;
+        }
+      },
       (err) => {
         console.log(err);
         this.error = "Error in loading settings";

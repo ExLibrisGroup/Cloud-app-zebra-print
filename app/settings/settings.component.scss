@@ -1,3 +1,8 @@
+#preview-btn
+{
+  margin-left: auto;
+
+}
 .form-container {
     display: flex;
     flex-direction: column;
@@ -6,7 +11,6 @@
   .form-container > * {
     width: 100%;
   }
-  
   div.title {
     display: flex;
     margin-top: 10px;
@@ -17,12 +21,14 @@
   }
   
   .commands-container {
+    margin-bottom: 10px;
     margin-top: 10px;
     width: fit-content;
   }
   .img-container
   {
     display: grid;
+    height: 50%;
   }
   
   .spinner {
@@ -32,11 +38,23 @@
   .commands-container button {
     margin-right: 10px;
   }
+  .template-drop
+  {
+    display: inline-block;
+
+    // display:flex;
+
+  }
+  .template-drop mat-form-field
+  {
+    width: 75%;
+  }
   
   #record-preview {
-    border: thin solid black;
-    overflow: auto;
-    max-height: 30%;
-    max-width: 100%;
+    padding: 1px solid black;
+    width: 300px;
+    height: 500px;
+    float: none;
+    overflow: hidden;
   }
   

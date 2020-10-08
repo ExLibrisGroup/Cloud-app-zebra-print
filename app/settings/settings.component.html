@@ -2,57 +2,57 @@
   <h1>Settings</h1>
 
   <a [routerLink]="['']">
-    <button mat-raised-button><mat-icon>arrow_back</mat-icon>Back</button>
+    <button mat-raised-button color="primary"><mat-icon>arrow_back</mat-icon>Back</button>
   </a>
 </div>
 <section>
-<ng-template #loading_spinner>
-  <div class="loading-shade">
-    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-  </div>
-</ng-template>
-<!-- [value]="(settings[kind])[settings.defTemplateSelctedInd[kindIdx]]"  -->
-<form (ngSubmit)="onSubmit(f)" #f="ngForm">
-  <div class="form-container" *ngIf="!loadingSettings; else loading_spinner">
-    <mat-form-field *ngFor="let kind of ['loan', 'return', 'fee']; index as kindIdx" appearance="standard">
-      <mat-label>Choose default template for {{ kind | titlecase }}</mat-label>
-      <mat-select [ngModel]="settings[kind][settings.defTemplateSelctedInd[kindIdx]]" [name]="kind" (selectionChange)="onChangeSelection(f)">
-        <mat-option *ngFor="let t of settings[kind]; index as tIdx" [value]="t" #optionSelected>{{
-          t.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-
-    <div class="commands-container">
-      <button mat-stroked-button type="submit" >Save as Defaults</button>
+  <ng-template #loading_spinner>
+    <div class="loading-shade">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
     </div>
-
-    <div class="preview">
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title 
-              >Preview Label Generated
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-label  class="label-bold">Choose kind of template</mat-label>
-          <mat-select [(ngModel)]="kindToPreview" name="selectPreview">
-            <mat-option *ngFor="let item of ['loan','return','fee'];index as idx" [value]="item"
-            (click)="previewService.getPreview(settings[kindToPreview][settings.defTemplateSelctedInd[idx]])">{{ item|titlecase }}</mat-option>
+  </ng-template>
+  <!-- [value]="(settings[kind])[settings.defTemplateSelctedInd[kindIdx]]"  -->
+  <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div class="form-container" *ngIf="!loadingSettings; else loading_spinner">
+      <div class="template-drop" *ngFor="let kind of ['loan', 'return', 'fee']; index as kindIdx">
+        <mat-form-field appearance="standard">
+          <mat-label>Choose default template for {{ kind | titlecase }}</mat-label>
+          <mat-select
+            [ngModel]="settings[kind][settings.defTemplateSelctedInd[kindIdx]]"
+            [name]="kind"
+            (selectionChange)="onChangeSelection(f)"
+          >
+            <mat-option
+              *ngFor="let t of settings[kind]; index as tIdx"
+              [value]="t"
+              #optionSelected
+              >{{ t.name }}</mat-option
+            >
           </mat-select>
-          <div *ngIf="!previewService.loadingPreview && kindToPreview" class="img-container">
-            <img id="record-preview" [src]="previewService.imageToShow" /><img />
-          </div>
-          <mat-spinner
-            diameter="40"
-            class="spinner"
-            style="position: left"
-            *ngIf="previewService.loadingPreview"
-          ></mat-spinner>
-        </mat-expansion-panel>
-      </mat-accordion>
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="previewService.getPreview(f.value[kind]); kindToPreview = kind"
+        >
+          Preview
+        </button>
+      </div>
+      <br />
     </div>
-  </div>
-</form>
+    <div class="commands-container">
+      <button mat-stroked-button type="submit" color="primary">Save as Defaults</button>
+    </div>
+
+    <div *ngIf="!previewService.loadingPreview && kindToPreview" class="img-container">
+      <img id="record-preview" [src]="previewService.imageToShow" /><img />
+    </div>
+    <mat-spinner
+      mode="indeterminate"
+      diameter="40"
+      class="spinner"
+      *ngIf="previewService.loadingPreview"
+    ></mat-spinner>
+  </form>
 </section>

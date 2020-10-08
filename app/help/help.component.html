@@ -1,15 +1,30 @@
-<div>
-    <select name="Devices" value="printers" (change)="onDeviceSelected($event)" >
-        <option *ngFor="let device of devices"  [value]="device">{{device.name}}</option>
-      </select>
-      <br>
-      <!-- <textarea name="" id="" cols="30" rows="10" [(ngModel)]="zplString"></textarea> -->
-      <button (click)="onWrite()">write</button>
-      <hr>
-      <p *ngIf="writeError!==''" style="color: red;">There was an error : {{writeError}}</p>
-      <br>
+<div class="title">
+  <a [routerLink]="['']" style="float: right">
+    <button mat-raised-button color="primary"><mat-icon>arrow_back</mat-icon>Back</button>
+  </a>
+  <h1>Help</h1>
 </div>
-<img *ngIf ="imageToShow"class="resize" [src]="imageToShow" />
-<br>
-<button (click)="onGet()">With GET</button>
-<button (click)="onPost()">With POST</button>
+<h2>How to use?</h2>
+<p>
+  Currently the app only work on "Manage patron services". Start the app and choose your desired
+  printer, After every adding of item to patron the label will be printed. Make sure you are on the main menu.
+</p>
+<h2>Zebra Browser Print</h2>
+<p>The app only works with Zebra browser print make sure it`s running in your computer.</p>
+<h2>Templates</h2>
+<p>
+  When working with templates you may use the following placehloders:
+  <li *ngFor="let item of dict |keyvalue">{{ item.key }}</li>
+</p>
+<div>
+  <h2>Issues</h2>
+  <p>
+    For more help with this app, or to report a problem, please open an issue by clicking on the
+    link below.
+  </p>
+  <p>
+    <a translate href="https://github.com/liron58/Zebra-print/issues" target="_blank"
+      >Open an issue</a
+    >
+  </p>
+</div>
