@@ -1,7 +1,7 @@
 import { Device } from "./../device.model";
 import { SettingsModel } from "./../settings.model";
 import { PrinterService } from "./../printer.service";
-import { interval, Subscription, timer } from "rxjs";
+import { forkJoin, interval, Subscription, timer } from "rxjs";
 import { map } from "rxjs/operators";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import {
@@ -13,7 +13,10 @@ import {
   CloudAppConfigService,
 } from "@exlibris/exl-cloudapp-angular-lib";
 import { Constants } from "../constants";
-
+interface LogData extends Entity
+{
+  barcode:string;
+}
 @Component({
   selector: "app-main",
   templateUrl: "./main.component.html",
@@ -31,8 +34,8 @@ export class MainComponent implements OnInit, OnDestroy {
   uidHash: Set<string> = new Set<string>();
   uidLoanHash: Set<string> = new Set<string>();
   uidReturnHash: Set<string> = new Set<string>();
-  printedList: Entity[] = [];
-  printingError: Entity[] = [];
+  printedList: LogData[] = [];
+  printingError: LogData[] = [];
 
   constructor(
     private restService: CloudAppRestService,
@@ -123,7 +126,7 @@ export class MainComponent implements OnInit, OnDestroy {
           data.loan_status === "ACTIVE"
             ? this.uidLoanHash.add(entity.id)
             : this.uidReturnHash.add(entity.id);
-          this.printedList.unshift(entity);
+          this.printedList.unshift({...entity,barcode:data.item_barcode});
           this.renderToTemplate(data, entity);
         },
       });
@@ -144,7 +147,7 @@ export class MainComponent implements OnInit, OnDestroy {
       this.templateSettings["_" + e + "_"] = val;
     });
     let str = this.settings[kind][this.settings.defTemplateSelctedInd[kind === "loan" ? 0 : 1]]
-      .zplString; 
+      .zplString;
     let re = new RegExp(Object.keys(this.templateSettings).join("|"), "gi");
     str = str.replace(re, (match) => {
       return this.templateSettings[match];
@@ -153,12 +156,12 @@ export class MainComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.log(err);
         kind === "loan" ? this.uidLoanHash.delete(entity.id) : this.uidReturnHash.delete(entity.id);
-        const idxError = this.printedList.indexOf(entity);
+        const idxError = this.printedList.indexOf({...entity,barcode:data.item_barcode});
         idxError > -1 ? this.printedList.splice(idxError, 1) : null;
-        this.printingError.push(entity);
+        this.printingError.unshift({...entity,barcode:data.item_barcode});
       },
       complete: () => {
-        const idxError = this.printingError.indexOf(entity);
+        const idxError = this.printingError.indexOf({...entity,barcode:data.item_barcode});
         idxError > -1 ? this.printingError.splice(idxError, 1) : null;
       },
     });

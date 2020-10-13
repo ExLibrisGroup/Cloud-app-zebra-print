@@ -13,13 +13,15 @@
       </mat-select>
     </div>
 
-    <div *ngIf="entities.length===0 && this.printedList.length===0">
+    <div *ngIf="entities.length === 0 && this.printedList.length === 0">
       <p>Please go to "Manage Patron Services" and look for records</p>
-
     </div>
     <span *ngFor="let entity of printingError">
-      <h2 style="color: Red;margin-bottom: 2px;">Error in printing:</h2>
-      <p [textContent]="entity.description ? entity.description : entity.id"></p>
+      <h2 style="color: Red; margin-bottom: 2px">Error in printing:</h2>
+      <p>
+        <strong>Barcode: </strong>{{ entity.barcode }} <strong>Title: </strong
+        >{{ entity.description ? entity.description : entity.id }}
+      </p>
       <button
         mat
         mat-stroked-button
@@ -39,11 +41,12 @@
         Cancel
       </button>
     </span>
-    <h2 style="color: green ;margin-bottom: 2px;" *ngIf="printedList.length > 0">Printed:</h2>
+    <h2 style="color: green; margin-bottom: 2px" *ngIf="printedList.length > 0">Printed:</h2>
     <ul style="list-style-type: none; padding: 0px; margin: 0px">
       <li *ngFor="let entity of printedList">
-        {{ entity.description ? entity.description : entity.id }}
-        <br>
+        <strong>Barcode: </strong>{{ entity.barcode }} <strong>Title: </strong
+        >{{ entity.description ? entity.description : entity.id }}
+        <br />
       </li>
     </ul>
 
