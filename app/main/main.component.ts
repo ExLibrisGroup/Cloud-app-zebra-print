@@ -13,9 +13,9 @@ import {
   CloudAppConfigService,
 } from "@exlibris/exl-cloudapp-angular-lib";
 import { Constants } from "../constants";
-interface LogData extends Entity
-{
-  barcode:string;
+import { ToastrService } from "ngx-toastr";
+interface LogData extends Entity {
+  barcode: string;
 }
 @Component({
   selector: "app-main",
@@ -27,6 +27,7 @@ export class MainComponent implements OnInit, OnDestroy {
   private templateSettings = Constants.placeHolders;
   loadingSettings = false;
   loadingPrinters = false;
+  loadingPrint =false;
   settings: SettingsModel = Constants.getDefForm();
   selectedPrinter: Device;
   printers: Device[] = [];
@@ -41,7 +42,8 @@ export class MainComponent implements OnInit, OnDestroy {
     private restService: CloudAppRestService,
     private eventsService: CloudAppEventsService,
     private settingsService: CloudAppSettingsService,
-    private printerService: PrinterService
+    private printerService: PrinterService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -117,6 +119,7 @@ export class MainComponent implements OnInit, OnDestroy {
   onSubmit(f) {}
 
   sendToPrint(entity: Entity) {
+    this.loadingPrint = true;
     if (entity.link) {
       this.restService.call(entity.link).subscribe({
         next: (data) => {
@@ -126,7 +129,6 @@ export class MainComponent implements OnInit, OnDestroy {
           data.loan_status === "ACTIVE"
             ? this.uidLoanHash.add(entity.id)
             : this.uidReturnHash.add(entity.id);
-          this.printedList.unshift({...entity,barcode:data.item_barcode});
           this.renderToTemplate(data, entity);
         },
       });
@@ -152,20 +154,38 @@ export class MainComponent implements OnInit, OnDestroy {
     str = str.replace(re, (match) => {
       return this.templateSettings[match];
     });
+    this.callToPrint(data,entity,kind,str);
+  }
+
+  private callToPrint(data,entity,kind,str)
+  {
+    
     this.printerService.writeToDevice(this.selectedPrinter, str).subscribe({
       error: (err) => {
-        console.log(err);
+        console.error(err);
+        this.toastr.error(`Error with printing ${data.item_barcode}`);
         kind === "loan" ? this.uidLoanHash.delete(entity.id) : this.uidReturnHash.delete(entity.id);
-        const idxError = this.printedList.indexOf({...entity,barcode:data.item_barcode});
-        idxError > -1 ? this.printedList.splice(idxError, 1) : null;
-        this.printingError.unshift({...entity,barcode:data.item_barcode});
+        const idxError = this.deepIndexOf(this.printingError, {
+          ...entity,
+          barcode: data.item_barcode,
+        });
+        idxError > -1 ? this.printingError.splice(idxError, 1) : null;
+        this.printingError.unshift({ ...entity, barcode: data.item_barcode });
+        this.loadingPrint = false;
       },
       complete: () => {
-        const idxError = this.printingError.indexOf({...entity,barcode:data.item_barcode});
+        this.toastr.success(`Successfully printed :  ${data.item_barcode}`);
+        this.printedList.unshift({ ...entity, barcode: data.item_barcode });
+        const idxError = this.deepIndexOf(this.printingError, {
+          ...entity,
+          barcode: data.item_barcode,
+        });
         idxError > -1 ? this.printingError.splice(idxError, 1) : null;
+        this.loadingPrint = false;
       },
     });
   }
+
 
   /**
    * Method for setting app the printers with zebra browser print
@@ -204,6 +224,14 @@ export class MainComponent implements OnInit, OnDestroy {
         throw new Error(error);
       }
     );
+  }
+
+  private deepIndexOf(arr, obj) {
+    return arr.findIndex(function (cur) {
+      return Object.keys(obj).every(function (key) {
+        return obj[key] === cur[key];
+      });
+    });
   }
 
   // debug() {

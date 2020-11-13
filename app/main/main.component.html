@@ -1,11 +1,12 @@
 <section>
   <h1>Welcome to Zebra printing app</h1>
   <ng-template #loading_spinner>
-    <div class="loading-shade">
+    <div *ngIf="loadingPrint" class="loading-shade">
       <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
     </div>
   </ng-template>
   <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div *ngIf="!loadingPrint; else loading_spinner"></div>
     <div class="form-container" *ngIf="!loadingSettings && !loadingPrinters; else loading_spinner">
       <mat-label class="label-bold">Choose which printer to use</mat-label>
       <mat-select name="Devices" [(ngModel)]="selectedPrinter">
