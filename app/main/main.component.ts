@@ -1,8 +1,7 @@
 import { Device } from "./../device.model";
 import { SettingsModel } from "./../settings.model";
 import { PrinterService } from "./../printer.service";
-import { forkJoin, interval, Subscription, timer } from "rxjs";
-import { map } from "rxjs/operators";
+import {  Subscription} from "rxjs";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import {
   CloudAppRestService,
@@ -10,10 +9,9 @@ import {
   Entity,
   PageInfo,
   CloudAppSettingsService,
-  CloudAppConfigService,
+  AlertService,
 } from "@exlibris/exl-cloudapp-angular-lib";
 import { Constants } from "../constants";
-import { ToastrService } from "ngx-toastr";
 interface LogData extends Entity {
   barcode: string;
 }
@@ -43,7 +41,7 @@ export class MainComponent implements OnInit, OnDestroy {
     private eventsService: CloudAppEventsService,
     private settingsService: CloudAppSettingsService,
     private printerService: PrinterService,
-    private toastr: ToastrService
+    private alert: AlertService
   ) {}
 
   ngOnInit() {
@@ -136,7 +134,7 @@ export class MainComponent implements OnInit, OnDestroy {
       console.error("Error : Entity have no link");
     }
   }
-
+ 
   renderToTemplate(data, entity) {
     let kind = data.loan_status === "ACTIVE" ? "loan" : "return";
     this.templateSettings._kindOfOperation_ = kind;
@@ -163,7 +161,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.printerService.writeToDevice(this.selectedPrinter, str).subscribe({
       error: (err) => {
         console.error(err);
-        this.toastr.error(`Error with printing ${data.item_barcode}`);
+        this.alert.error(`Error with printing ${data.item_barcode}`);
         kind === "loan" ? this.uidLoanHash.delete(entity.id) : this.uidReturnHash.delete(entity.id);
         const idxError = this.deepIndexOf(this.printingError, {
           ...entity,
@@ -174,7 +172,7 @@ export class MainComponent implements OnInit, OnDestroy {
         this.loadingPrint = false;
       },
       complete: () => {
-        this.toastr.success(`Successfully printed :  ${data.item_barcode}`);
+        this.alert.success(`Successfully printed :  ${data.item_barcode}`);
         this.printedList.unshift({ ...entity, barcode: data.item_barcode });
         const idxError = this.deepIndexOf(this.printingError, {
           ...entity,

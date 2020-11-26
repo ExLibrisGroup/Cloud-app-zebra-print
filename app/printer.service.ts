@@ -30,6 +30,7 @@ export class PrinterService {
    * @param data the data to send to device ::ZPL code
    */
   writeToDevice(device: Device, data: string): Observable<Object> {
+    console.log('here')
     const headers = new HttpHeaders({
       Accept: "*/*",
       "Content-Type": "text/plain;charset=UTF-8",
